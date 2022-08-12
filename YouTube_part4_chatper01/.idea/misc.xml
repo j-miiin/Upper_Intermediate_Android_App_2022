@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/coding/Android Study/Upper_Intermediate_Android_App_2022/YouTube_part4_chatper01/app/src/main/res/drawable/shape_circle.xml" value="0.1395" />
         <entry key="..\:/coding/Android Study/Upper_Intermediate_Android_App_2022/YouTube_part4_chatper01/app/src/main/res/layout/activity_main.xml" value="0.2692502532928065" />
         <entry key="..\:/coding/Android Study/Upper_Intermediate_Android_App_2022/YouTube_part4_chatper01/app/src/main/res/layout/fragment_player.xml" value="0.2692502532928065" />
+        <entry key="..\:/coding/Android Study/Upper_Intermediate_Android_App_2022/YouTube_part4_chatper01/app/src/main/res/layout/item_video.xml" value="0.2692502532928065" />
         <entry key="..\:/coding/Android Study/Upper_Intermediate_Android_App_2022/YouTube_part4_chatper01/app/src/main/res/menu/bottom_nav_menu.xml" value="0.40370370370370373" />
       </map>
     </option>
