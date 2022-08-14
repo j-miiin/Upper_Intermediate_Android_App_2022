@@ -1,6 +1,6 @@
 # Upper_Intermediate_Android_App_2022
 심화된 안드로이드 앱 구현하기
-- 유튜브
+- 유튜브 ✔️
 - 음악 스트리밍 앱
 - 위치검색 지도 앱
 - OTT 앱 
