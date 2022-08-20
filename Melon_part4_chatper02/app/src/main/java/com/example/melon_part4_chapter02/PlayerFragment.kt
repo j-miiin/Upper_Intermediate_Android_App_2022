@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.SeekBar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,7 @@ class PlayerFragment: Fragment(R.layout.fragment_player) {
         initPlayView(fragmentPlayerBinding)
         initPlayListButton(fragmentPlayerBinding)
         initPlayControlButtons(fragmentPlayerBinding)
+        initSeekBar(fragmentPlayerBinding)
         initRecyclerView(fragmentPlayerBinding)
 
         getVideoListFromServer()
@@ -165,6 +167,23 @@ class PlayerFragment: Fragment(R.layout.fragment_player) {
         }
     }
 
+    private fun initSeekBar(fragmentPlayerBinding: FragmentPlayerBinding) {
+        fragmentPlayerBinding.playerSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, p1: Int, p2: Boolean) {}
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                player?.seekTo((seekBar.progress * 1000).toLong())
+            }
+
+        })
+
+        fragmentPlayerBinding.playListSeekBar.setOnTouchListener { v, event ->
+            false
+        }
+    }
+
     private fun initRecyclerView(fragmentPlayerBinding: FragmentPlayerBinding) {
         playListAdapter = PlayListAdapter {
             // 음악을 재생
@@ -226,6 +245,21 @@ class PlayerFragment: Fragment(R.layout.fragment_player) {
         model.updateCurrentPosition(musicModel)
         player?.seekTo(model.currentPosition, 0)
         player?.play()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        player?.pause()
+        view?.removeCallbacks(updateSeekRunnable)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        binding = null
+        player?.release()
+        view?.removeCallbacks(updateSeekRunnable)
     }
 
     companion object {
