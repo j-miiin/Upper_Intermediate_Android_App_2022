@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import com.example.google_map_part4_chatper03.databinding.ActivityMainBinding
 import com.example.google_map_part4_chatper03.model.LocationLatLngEntity
 import com.example.google_map_part4_chatper03.model.SearchResultEntity
+import com.example.google_map_part4_chatper03.response.search.Pois
 import com.example.google_map_part4_chatper03.response.utility.RetrofitUtil
 import kotlinx.coroutines.*
 import java.lang.Exception
@@ -58,10 +59,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         adapter.notifyDataSetChanged()
     }
 
-    private fun setData() {
-        val dataList = (0..10).map {
+    private fun setData(pois: Pois) {
+        val dataList = pois.poi.map {
             SearchResultEntity(
-                name = "빌딩 $it",
+                name = it.name ?: "빌딩명 없음",
                 fullAddress = "주소 $it",
                 locationLatLng = LocationLatLngEntity(
                     it.toFloat(),
@@ -86,6 +87,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                         val body = response.body()
                         withContext(Dispatchers.Main) {
                             Log.e("response", body.toString())
+                            body?.let { searchResponse ->
+                                setData(searchResponse.searchPoiInfo.pois)
+                            }
                         }
                     }
                 }
