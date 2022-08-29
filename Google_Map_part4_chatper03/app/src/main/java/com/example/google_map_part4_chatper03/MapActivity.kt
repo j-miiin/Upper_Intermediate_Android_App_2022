@@ -8,6 +8,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.google_map_part4_chatper03.databinding.ActivityMapBinding
@@ -141,6 +142,22 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             locationLatLngEntity.longitude.toDouble()),
             CAMERA_ZOOM_LEVEL))
 
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED
+                && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                setMyLocationListener()
+            } else {
+                Toast.makeText(this, ("권한을 받지 못했습니다."), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     inner class MyLocationListener: LocationListener {
