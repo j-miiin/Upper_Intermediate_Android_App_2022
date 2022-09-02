@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var isGatheringMotionAnimating: Boolean = false
+    private var isCuratingMotionAnimating: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,14 @@ class MainActivity : AppCompatActivity() {
                     binding.buttonShownMotionLayout.transitionToStart()
                 }
             }
+
+            if (scrollValue > binding.scrollView.height) {
+                if (isCuratingMotionAnimating.not()) {
+                    binding.curationAnimationMotionLayout.setTransition(R.id.curation_animation_start1, R.id.curation_animation_end1)
+                    binding.curationAnimationMotionLayout.transitionToEnd()
+                    isCuratingMotionAnimating = true
+                }
+            }
         }
     }
 
@@ -67,6 +76,24 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
                 isGatheringMotionAnimating = false
+            }
+
+            override fun onTransitionTrigger(motionLayout: MotionLayout?, triggerId: Int, positive: Boolean, progress: Float) {}
+
+        })
+
+        binding.curationAnimationMotionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionStarted(motionLayout: MotionLayout?, startId: Int, endId: Int) {}
+
+            override fun onTransitionChange(motionLayout: MotionLayout?, startId: Int, endId: Int, progress: Float) = Unit
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                when(currentId) {
+                    R.id.curation_animation_end1 -> {
+                        binding.curationAnimationMotionLayout.setTransition(R.id.curation_animation_start2, R.id.curation_animation_end2)
+                        binding.curationAnimationMotionLayout.transitionToEnd()
+                    }
+                }
             }
 
             override fun onTransitionTrigger(motionLayout: MotionLayout?, triggerId: Int, positive: Boolean, progress: Float) {}
