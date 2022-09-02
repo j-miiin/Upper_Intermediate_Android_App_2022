@@ -31,19 +31,33 @@ class MainActivity : AppCompatActivity() {
         makeStatusBarTransparent()
         initAppBar()
         initInsetMargin()
+        initScrollViewListeners()
+        initMotionLayoutListeners()
+    }
+
+    private fun initScrollViewListeners() {
+        binding.scrollView.smoothScrollTo(0, 0)
 
         binding.scrollView.viewTreeObserver.addOnScrollChangedListener {
-            if (binding.scrollView.scrollY > 150f.dpToPx(this@MainActivity).toInt()) {
-                binding.gatheringDigitalThingsLayout.transitionToEnd()
-                binding.buttonShownMotionLayout.transitionToEnd()
+            val scrollValue = binding.scrollView.scrollY
+
+            if (scrollValue > 150f.dpToPx(this@MainActivity).toInt()) {
+                if (isGatheringMotionAnimating.not()) {
+                    binding.gatheringDigitalThingsBackgroundMotionLayout.transitionToEnd()
+                    binding.gatheringDigitalThingsLayout.transitionToEnd()
+                    binding.buttonShownMotionLayout.transitionToEnd()
+                }
             } else {
                 if (isGatheringMotionAnimating.not()) {
+                    binding.gatheringDigitalThingsBackgroundMotionLayout.transitionToStart()
                     binding.gatheringDigitalThingsLayout.transitionToStart()
                     binding.buttonShownMotionLayout.transitionToStart()
                 }
             }
         }
+    }
 
+    private fun initMotionLayoutListeners() {
         binding.gatheringDigitalThingsLayout.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionStarted(motionLayout: MotionLayout?, startId: Int, endId: Int) {
                 isGatheringMotionAnimating = true
@@ -78,15 +92,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun initAppBar() {
         binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val topPadding = 120f.dpToPx(this)
+            val topPadding = 300f.dpToPx(this)
+            val realAlphaScrollHeight = appBarLayout.measuredHeight - appBarLayout.totalScrollRange
             val abstractOffset = abs(verticalOffset)
+
+            val realAlphaVerticalOffset = if (abstractOffset - topPadding < 0) 0f else abstractOffset - topPadding
+
             if (abstractOffset < topPadding) {
                 binding.toolbarBackgroundView.alpha = 0f
                 return@OnOffsetChangedListener
             }
 
-            val verticalOffsetByTopPadding = abstractOffset - topPadding
-            val percentage = abs(verticalOffsetByTopPadding) / appBarLayout.totalScrollRange
+            val percentage = realAlphaVerticalOffset / realAlphaScrollHeight
             binding.toolbarBackgroundView.alpha = 1 - (if (1 - percentage * 2 < 0) 0f else 1 - percentage * 2)
         })
 
