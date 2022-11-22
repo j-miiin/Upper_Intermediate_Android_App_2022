@@ -1,24 +1,27 @@
 package com.example.github_part4_chapter05
 
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.browser.customtabs.CustomTabsIntent
+import android.util.Log
+import com.example.github_part4_chapter05.data.database.DatabaseProvider
+import com.example.github_part4_chapter05.data.entity.GithubOwner
+import com.example.github_part4_chapter05.data.entity.GithubRepoEntity
 import com.example.github_part4_chapter05.databinding.ActivityMainBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
+import java.util.Date
 import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
-    private lateinit var binding: ActivityMainBinding
-
-    val job: Job = Job()
+    val job = Job()
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
+
+    val repositoryDao by lazy { DatabaseProvider.provideDB(applicationContext).repositoryDao() }
+
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,33 +29,44 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         setContentView(binding.root)
 
         initViews()
+
+        launch {
+            addMockData()
+            val githubRepositories = loadGithubRepositories()
+            withContext(coroutineContext) {
+                Log.e("repositories", githubRepositories.toString())
+            }
+        }
     }
 
     private fun initViews() = with(binding) {
-        loginButton.setOnClickListener {
-            loginGithub()
+        searchButton.setOnClickListener {
+            startActivity(
+                Intent(this@MainActivity, SearchActivity::class.java)
+            )
         }
     }
 
-    // todo https://github.com/login/oauth/authorize?client_id=abcdef
-    private fun loginGithub() {
-        val loginUri = Uri.Builder().scheme("https").authority("github.com")
-            .appendPath("login")
-            .appendPath("oauth")
-            .appendPath("authorize")
-            .appendQueryParameter("client_id", BuildConfig.GITHUB_CLIENT_ID)
-            .build()
-
-        CustomTabsIntent.Builder().build().also {
-            it.launchUrl(this, loginUri)
+    private suspend fun addMockData() = withContext(Dispatchers.IO) {
+        val mockData = (0 until 9).map {
+            GithubRepoEntity(
+                name = "repo $it",
+                fullName = "name $it",
+                owner = GithubOwner(
+                    "login",
+                    "avatarUrl"
+                ),
+                description = null,
+                language = null,
+                updatedAt = Date().toString(),
+                stargazersCount = it
+            )
         }
+        repositoryDao.insertAll(mockData)
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        intent?.data?.getQueryParameter("code")?.let {
-            // todo getAccessToken
-        }
+    private suspend fun loadGithubRepositories() = withContext(Dispatchers.IO) {
+        val repositories = repositoryDao.getHistory()
+        return@withContext repositories
     }
 }
