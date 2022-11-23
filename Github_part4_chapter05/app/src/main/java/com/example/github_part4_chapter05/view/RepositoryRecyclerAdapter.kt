@@ -47,13 +47,13 @@ class RepositoryRecyclerAdapter: RecyclerView.Adapter<RepositoryRecyclerAdapter.
     }
 
     override fun onBindViewHolder(holder: RepositoryItemViewHolder, position: Int) {
-        holder.bindViews(repositoryList[position])
+        holder.bindData(repositoryList[position])
         holder.bindViews(repositoryList[position])
     }
 
     override fun getItemCount(): Int = repositoryList.size
 
-    fun setSearchResultList(searchResultList: List<GithubRepoEntity>, searchResultClickListener: (GithubRepoEntity) -> Unit) {
+    fun setRepositoryList(searchResultList: List<GithubRepoEntity>, searchResultClickListener: (GithubRepoEntity) -> Unit) {
         this.repositoryList = searchResultList
         this.repositoryClickListener = searchResultClickListener
         notifyDataSetChanged()
