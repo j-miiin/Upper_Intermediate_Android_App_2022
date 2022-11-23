@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.example.github_part4_chapter05.data.entity.GithubRepoEntity
 
 @Dao
-interface SearchHistoryDao {
+interface RepositoryDao {
 
     @Insert
     suspend fun insert(repo: GithubRepoEntity)
@@ -17,6 +17,12 @@ interface SearchHistoryDao {
 
     @Query("SELECT * FROM githubrepository")
     suspend fun getHistory(): List<GithubRepoEntity>
+
+    @Query("SELECT * FROM githubrepository WHERE fullName = :fullName")
+    suspend fun getRepository(fullName: String): GithubRepoEntity?
+
+    @Query("DELETE FROM githubrepository WHERE fullName = :fullName")
+    suspend fun remove(fullName: String)
 
     @Query("DELETE FROM githubrepository")
     suspend fun clearAll()
