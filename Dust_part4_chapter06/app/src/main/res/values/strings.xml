@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Dust_part4_chapter06</string>
+    <string name="additionalInformation">자료 출처 : 환경부/한국환경공단\n주의 사항 : 해당 기관이 제공하는 자료는 \'인증 받지 않은 실시간 자료\'이므로 자료 오류 및 표출방식에 따라 값이 다를 수 있음</string>
 </resources>
