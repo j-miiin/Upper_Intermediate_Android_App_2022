@@ -1,6 +1,7 @@
 package com.example.dust_part4_chapter06.data
 
 import com.example.dust_part4_chapter06.BuildConfig
+import com.example.dust_part4_chapter06.data.models.airquality.MeasuredValue
 import com.example.dust_part4_chapter06.data.models.monitoringstation.MonitoringStation
 import com.example.dust_part4_chapter06.data.services.AirKoreaApiService
 import com.example.dust_part4_chapter06.data.services.KakaoLocalApiService
@@ -30,6 +31,15 @@ object Repository {
             ?.monitoringStations
             ?.minByOrNull { it?.tm ?: Double.MAX_VALUE }    // 가장 가까운 station 하나만 받아옴
     }
+
+    suspend fun getLatestAirQualityData(stationName: String): MeasuredValue? =
+        airKoreaApiService
+            .getRealTimeAirQualities(stationName)
+            .body()
+            ?.response
+            ?.body
+            ?.measuredValues
+            ?.firstOrNull()
 
     private val kakaoLocalApiService: KakaoLocalApiService by lazy {
         Retrofit.Builder()
